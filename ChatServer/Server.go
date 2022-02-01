@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"net"
+	"os"
+	"strings"
 )
 
 type Server struct {
@@ -60,8 +64,19 @@ func (s *Server) ManagedConnections() {
 }
 
 func (s *Server) ManagingServer() {
-	for s.running {
+	input := bufio.NewReader(os.Stdin)
 
+	for s.running {
+		fmt.Print("> ")
+		command, err := input.ReadString('\n')
+		if err != nil {
+
+		}
+
+		if strings.Contains(strings.ToLower(command), "exit") {
+			s.running = false
+			break
+		}
 	}
 }
 
