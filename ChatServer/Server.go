@@ -47,7 +47,7 @@ func (s *Server) ManagedConnections() {
 			{
 				newClient := CreateIncomeClient(conn)
 				s.connections[conn] = &newClient
-				go newClient.HandleIncomingMessages(s.deadConnections)
+				go newClient.HandleIncomingMessages(s.deadConnections, s)
 			}
 		case deadCon := <-s.deadConnections:
 			{
@@ -74,4 +74,15 @@ func (s *Server) DeleteDeadConnection(deadConn net.Conn) {
 			break
 		}
 	}
+}
+
+func (s *Server) AddClientToRoom(roomName string, client *Client) bool {
+	wantedRoom := s.rooms[roomName]
+	if wantedRoom == nil {
+		return false
+	}
+	client.room = wantedRoom
+	wantedRoom.Clients[client.name] = client
+
+	return true
 }
