@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"net"
 )
 
@@ -22,11 +23,28 @@ func (c *Client) HandleIncomingMessages(deadChannel chan net.Conn) {
 		if err != nil {
 			break
 		}
-
 		//Handle requset
+		if ItsCommand(mesg) {
+
+		} else {
+			c.SendMessage(mesg)
+		}
 	}
 
 	deadChannel <- c.connection
+}
+
+func (c *Client) SendMessage(message string) {
+	if c.name == "" || c.room == nil {
+		_, err := c.connection.Write([]byte("You haven't set Nickname or Room yet! Please set it"))
+		if err != nil {
+			return
+		}
+		return
+	}
+	message = fmt.Sprintf("%s\t: %s\n", c.name, message)
+
+	c.room.SendMessageToRoom(message, c)
 }
 
 func (c *Client) GetRoom() *Room {
