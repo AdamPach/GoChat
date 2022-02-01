@@ -11,10 +11,6 @@ type Client struct {
 	connection net.Conn
 }
 
-func (c *Client) sendMessage(mesg string) {
-
-}
-
 func CreateIncomeClient(conn net.Conn) Client {
 	return Client{connection: conn}
 }
@@ -31,4 +27,8 @@ func (c *Client) HandleIncomingMessages(deadChannel chan net.Conn) {
 	}
 
 	deadChannel <- c.connection
+}
+
+func (c *Client) GetRoom() *Room {
+	return c.room
 }

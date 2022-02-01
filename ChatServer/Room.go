@@ -11,3 +11,7 @@ func CreateRoom(roomName string) *Room {
 		Clients:  make(map[string]*Client),
 	}
 }
+
+func (r *Room) DeleteClient(client *Client) {
+	delete(r.Clients, client.name)
+}

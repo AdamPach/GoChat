@@ -9,7 +9,7 @@ type Server struct {
 	listener          net.Listener
 	rooms             map[string]*Room
 	running           bool
-	connections       []Client
+	connections       map[net.Conn]*Client
 	incomeConnections chan net.Conn
 	deadConnections   chan net.Conn
 }
@@ -22,7 +22,7 @@ func CreateServer(listener net.Listener) *Server {
 		listener:          listener,
 		rooms:             defRooms,
 		running:           true,
-		connections:       make([]Client, 0),
+		connections:       make(map[net.Conn]*Client),
 		incomeConnections: make(chan net.Conn),
 		deadConnections:   make(chan net.Conn),
 	}
@@ -46,10 +46,32 @@ func (s *Server) ManagedConnections() {
 		case conn := <-s.incomeConnections:
 			{
 				newClient := CreateIncomeClient(conn)
-				s.connections = append(s.connections, newClient)
-
+				s.connections[conn] = &newClient
+				go newClient.HandleIncomingMessages(s.deadConnections)
+			}
+		case deadCon := <-s.deadConnections:
+			{
+				s.DeleteDeadConnection(deadCon)
+				deadCon.Close()
 			}
 
+		}
+	}
+}
+
+func (s *Server) ManagingServer() {
+	for s.running {
+
+	}
+}
+
+func (s *Server) DeleteDeadConnection(deadConn net.Conn) {
+	for item := range s.connections {
+		if item == deadConn {
+			deadClient := s.connections[item]
+			deadClient.GetRoom().DeleteClient(deadClient)
+			delete(s.connections, deadConn)
+			break
 		}
 	}
 }

@@ -18,4 +18,5 @@ func main() {
 	server := CreateServer(listener)
 	go server.Listen()
 	go server.ManagedConnections()
+	server.ManagingServer()
 }
