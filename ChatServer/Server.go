@@ -20,7 +20,7 @@ type Server struct {
 
 func CreateServer(listener net.Listener) *Server {
 	defRooms := make(map[string]*Room)
-	defRooms["default"] = CreateRoom("default")
+	defRooms["default\r\n"] = CreateRoom("default\r\n")
 
 	return &Server{
 		listener:          listener,

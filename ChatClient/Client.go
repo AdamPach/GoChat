@@ -9,16 +9,17 @@ import (
 )
 
 type Client struct {
-	connection *net.Conn
+	connection    net.Conn
+	runningClient bool
 }
 
 func InitConnection() *Client {
-	input := bufio.NewReader(os.Stdin)
+	//input := bufio.NewReader(os.Stdin)
 
-	ipAddr := GetIPAddres(input)
-	port := GetPor(input)
+	//ipAddr := GetIPAddres(input)
+	//port := GetPor(input)
 
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s,%s", ipAddr, port))
+	conn, err := net.Dial("tcp", "127.0.0.1:7000")
 
 	if err != nil {
 		fmt.Println("You cant connect to this server!")
@@ -26,16 +27,43 @@ func InitConnection() *Client {
 	}
 
 	return &Client{
-		connection: &conn,
+		connection:    conn,
+		runningClient: true,
 	}
 }
 
 func (c *Client) ListenForMessages() {
-
+	incomingMessagesReader := bufio.NewReader(c.connection)
+	for c.runningClient {
+		mesg, err := incomingMessagesReader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Cant read messages")
+			c.runningClient = false
+			break
+		}
+		fmt.Println(mesg)
+	}
 }
 
 func (c *Client) SendMessages() {
+	input := bufio.NewReader(os.Stdin)
+	for c.runningClient {
+		fmt.Print("> ")
+		mesg, err := input.ReadString('\n')
+		if err != nil {
+			fmt.Println("Cant send messages")
+			c.runningClient = false
+			break
+		}
 
+		_, err = c.connection.Write([]byte(mesg))
+
+		if err != nil {
+			fmt.Println("Cant send messages")
+			c.runningClient = false
+			break
+		}
+	}
 }
 
 func GetIPAddres(input *bufio.Reader) string {
