@@ -55,13 +55,13 @@ func (c *Client) UseCommands(command string, server *Server) {
 			c.SendErrorMessage("Firstly you must set nick with /nick command!\n")
 			return
 		}
-		res := server.AddClientToRoom(cmd[1], c)
+		res := server.AddClientToRoom(RemoveSendingCharacters(cmd[1]), c)
 		if !res {
 			c.SendErrorMessage("Please send existing room name\n")
 			return
 		}
 	} else if cmd[0] == "/nick" {
-		c.name = cmd[1]
+		c.name = RemoveSendingCharacters(cmd[1])
 		return
 	} else {
 		c.SendMessage("This command don't exist!")
