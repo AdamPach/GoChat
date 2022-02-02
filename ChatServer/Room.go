@@ -26,3 +26,7 @@ func (r *Room) SendMessageToRoom(message string, sender *Client) {
 		}
 	}
 }
+
+func (r *Room) RemoveClientFromRoom(c *Client) {
+	delete(r.Clients, c.name)
+}

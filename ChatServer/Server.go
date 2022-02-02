@@ -71,13 +71,20 @@ func (s *Server) ManagingServer() {
 		fmt.Print("> ")
 		command, err := input.ReadString('\n')
 		if err != nil {
-
+			s.running = false
+			s.CloseAllConections()
+			os.Exit(0)
 		}
 
 		if strings.ToLower(Shared.RemoveSendingCharacters(command)) == "exit" {
 			s.running = false
 			s.CloseAllConections()
 			os.Exit(0)
+		} else if strings.ToLower(Shared.RemoveSendingCharacters(command)) == "rooms" {
+			err = s.ManageRooms(input)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 }
@@ -106,6 +113,9 @@ func (s *Server) AddClientToRoom(roomName string, client *Client) bool {
 	wantedRoom := s.rooms[roomName]
 	if wantedRoom == nil {
 		return false
+	}
+	if client.room != nil {
+		client.room.RemoveClientFromRoom(client)
 	}
 	client.room = wantedRoom
 	wantedRoom.Clients[client.name] = client

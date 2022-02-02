@@ -42,7 +42,7 @@ func (c *Client) UseCommands(command string, server *Server) {
 		for rn := range server.rooms {
 			roomsNames = append(roomsNames, rn)
 		}
-		c.SendErrorMessage(fmt.Sprintf("Rooms: %s", strings.Join(roomsNames, ", ")))
+		c.SendErrorMessage(fmt.Sprintf("Rooms: %s\n", strings.Join(roomsNames, ", ")))
 		return
 	}
 
