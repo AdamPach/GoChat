@@ -1,6 +1,7 @@
 package main
 
 import (
+	"GoChat/Shared"
 	"bufio"
 	"fmt"
 	"net"
@@ -14,12 +15,12 @@ type Client struct {
 }
 
 func InitConnection() *Client {
-	//input := bufio.NewReader(os.Stdin)
+	input := bufio.NewReader(os.Stdin)
 
-	//ipAddr := GetIPAddres(input)
-	//port := GetPor(input)
+	ipAddr := Shared.RemoveSendingCharacters(GetIPAddres(input))
+	port := Shared.RemoveSendingCharacters(GetPor(input))
 
-	conn, err := net.Dial("tcp", "127.0.0.1:7000")
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", ipAddr, port))
 
 	if err != nil {
 		fmt.Println("You cant connect to this server!")
