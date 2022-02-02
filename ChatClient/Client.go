@@ -14,6 +14,8 @@ type Client struct {
 	runningClient bool
 }
 
+const prompt = ">: "
+
 func InitConnection() *Client {
 	input := bufio.NewReader(os.Stdin)
 
@@ -40,16 +42,17 @@ func (c *Client) ListenForMessages() {
 		if err != nil {
 			fmt.Println("Cant read messages")
 			c.runningClient = false
-			break
+			os.Exit(1)
 		}
-		fmt.Println(mesg)
+		fmt.Print(mesg)
+		fmt.Print(prompt)
 	}
 }
 
 func (c *Client) SendMessages() {
 	input := bufio.NewReader(os.Stdin)
 	for c.runningClient {
-		fmt.Print("> ")
+		fmt.Print(prompt)
 		mesg, err := input.ReadString('\n')
 		if err != nil {
 			fmt.Println("Cant send messages")

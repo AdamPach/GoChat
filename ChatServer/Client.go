@@ -37,7 +37,7 @@ func (c *Client) HandleIncomingMessages(deadChannel chan net.Conn, server *Serve
 
 func (c *Client) UseCommands(command string, server *Server) {
 	cmd := strings.Split(command, " ")
-	if cmd[0] == "/rooms" {
+	if Shared.RemoveSendingCharacters(cmd[0]) == "/rooms" {
 		roomsNames := make([]string, 0)
 		for rn := range server.rooms {
 			roomsNames = append(roomsNames, rn)
@@ -65,7 +65,7 @@ func (c *Client) UseCommands(command string, server *Server) {
 		c.name = Shared.RemoveSendingCharacters(cmd[1])
 		return
 	} else {
-		c.SendMessage("This command don't exist!")
+		c.SendMessage("This command don't exist!\n")
 	}
 }
 
@@ -78,13 +78,10 @@ func (c *Client) SendErrorMessage(message string) {
 
 func (c *Client) SendMessage(message string) {
 	if c.name == "" || c.room == nil {
-		_, err := c.connection.Write([]byte("You haven't set Nickname or Room yet! Please set it"))
-		if err != nil {
-			return
-		}
+		c.SendErrorMessage("You haven't set Nickname or Room yet! Please set it\n")
 		return
 	}
-	message = fmt.Sprintf("%s\t: %s\n", c.name, message)
+	message = fmt.Sprintf("%s : %s", c.name, message)
 
 	c.room.SendMessageToRoom(message, c)
 }

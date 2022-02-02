@@ -1,6 +1,7 @@
 package main
 
 import (
+	"GoChat/Shared"
 	"bufio"
 	"fmt"
 	"log"
@@ -38,6 +39,7 @@ func (s *Server) Listen() {
 
 		if err != nil {
 			log.Println("You cant accept this connection!")
+			continue
 		}
 
 		s.incomeConnections <- conn
@@ -56,7 +58,6 @@ func (s *Server) ManagedConnections() {
 		case deadCon := <-s.deadConnections:
 			{
 				s.DeleteDeadConnection(deadCon)
-				deadCon.Close()
 			}
 
 		}
@@ -73,18 +74,28 @@ func (s *Server) ManagingServer() {
 
 		}
 
-		if strings.Contains(strings.ToLower(command), "exit") {
+		if strings.ToLower(Shared.RemoveSendingCharacters(command)) == "exit" {
 			s.running = false
-			break
+			s.CloseAllConections()
+			os.Exit(0)
 		}
 	}
 }
 
+func (s *Server) CloseAllConections() {
+	for c := range s.connections {
+		c.Close()
+	}
+}
+
 func (s *Server) DeleteDeadConnection(deadConn net.Conn) {
+	defer deadConn.Close()
 	for item := range s.connections {
 		if item == deadConn {
 			deadClient := s.connections[item]
-			deadClient.GetRoom().DeleteClient(deadClient)
+			if room := deadClient.GetRoom(); room != nil {
+				room.DeleteClient(deadClient)
+			}
 			delete(s.connections, deadConn)
 			break
 		}
