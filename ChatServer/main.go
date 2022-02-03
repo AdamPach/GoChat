@@ -1,6 +1,7 @@
 package main
 
 import (
+	"GoChat/ChatServer/Server"
 	"log"
 	"net"
 	"os"
@@ -16,7 +17,7 @@ func main() {
 
 	defer listener.Close()
 
-	server := CreateServer(listener)
+	server := Server.CreateServer(listener)
 	go server.Listen()
 	go server.ManagedConnections()
 	server.ManagingServer()
