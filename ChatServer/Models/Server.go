@@ -7,10 +7,10 @@ import (
 )
 
 type Server struct {
-	listener          net.Listener
-	incomeConnections chan net.Conn
-	deadConnections   chan net.Conn
-	running           bool
+	Listener          net.Listener
+	IncomeConnections chan net.Conn
+	DeadConnections   chan net.Conn
+	Running           bool
 	Connections       map[net.Conn]*ServerModels.ChatClient
 	Rooms             map[string]*ServerModels.Room
 	ClientCommands    map[string]*CommandModels.BaseCommand

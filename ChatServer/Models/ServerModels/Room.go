@@ -1,6 +1,6 @@
 package ServerModels
 
 type Room struct {
-	roomName string
+	RoomName string
 	Clients  map[string]*ChatClient
 }
