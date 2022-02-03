@@ -15,7 +15,7 @@ func AddClientToRoom(s *ServerModels.Server, c *ServerModels.ChatClient, roomNam
 		return errors.New("You enter invalid room name")
 	}
 	if c.Room != nil {
-		DeleteUserFromRoom(wantedRoom, c)
+		DeleteUserFromRoom(c.Room, c)
 	}
 
 	c.Room = wantedRoom

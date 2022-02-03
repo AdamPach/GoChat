@@ -1,6 +1,7 @@
 package Handlers
 
 import (
+	"GoChat/ChatServer/Funcs/ClientCommands"
 	"GoChat/ChatServer/Funcs/Sender"
 	"GoChat/ChatServer/Models/ServerModels"
 	"bufio"
@@ -14,7 +15,7 @@ func HandleClientMessages(c *ServerModels.ChatClient, s *ServerModels.Server) {
 			break
 		}
 		if mesg[0] == '/' {
-
+			ClientCommands.ExecuteCommand(s, c, mesg)
 		} else {
 			Sender.SendMessage(c, mesg)
 		}

@@ -9,7 +9,7 @@ import (
 
 func CreateUsersInRoomCommand() *ServerModels.ClientCommand {
 	return &ServerModels.ClientCommand{
-		CommandName: "/nick",
+		CommandName: "/users",
 		MinArgs:     0,
 		ExecFunc:    ExecuteUserInRoom,
 	}

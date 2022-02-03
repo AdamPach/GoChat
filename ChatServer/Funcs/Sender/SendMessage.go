@@ -1,6 +1,9 @@
 package Sender
 
-import "GoChat/ChatServer/Models/ServerModels"
+import (
+	"GoChat/ChatServer/Models/ServerModels"
+	"fmt"
+)
 
 func SendMessage(c *ServerModels.ChatClient, message string) {
 	if c.Name == "" || c.Room == nil {
@@ -13,7 +16,7 @@ func SendMessage(c *ServerModels.ChatClient, message string) {
 func BroadcastMessageToRoom(c *ServerModels.ChatClient, message string) {
 	for _, client := range c.Room.Clients {
 		if client != c {
-			client.Connection.Write([]byte(message))
+			client.Connection.Write([]byte(fmt.Sprintf("%s :%s", c.Name, message)))
 		}
 	}
 }
