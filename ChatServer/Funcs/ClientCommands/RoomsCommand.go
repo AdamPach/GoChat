@@ -9,7 +9,7 @@ import (
 
 func CreateRoomsCommand() *ServerModels.ClientCommand {
 	return &ServerModels.ClientCommand{
-		CommandName: "/nick",
+		CommandName: "/rooms",
 		MinArgs:     0,
 		ExecFunc:    ExecruteRoomsCommand,
 	}

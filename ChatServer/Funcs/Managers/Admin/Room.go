@@ -1,6 +1,7 @@
 package Admin
 
 import (
+	"GoChat/ChatServer/Funcs/Sender"
 	"GoChat/ChatServer/Funcs/Static"
 	"GoChat/ChatServer/Models/ServerModels"
 	"GoChat/Shared"
@@ -50,6 +51,7 @@ func DeleteRoom(s *ServerModels.Server, roomName string) error {
 	}
 
 	for _, client := range deletedRoom.Clients {
+		Sender.SendInfo(client, "This room was deleted, please select another")
 		client.Room = nil
 	}
 	delete(s.Rooms, deletedRoom.RoomName)
