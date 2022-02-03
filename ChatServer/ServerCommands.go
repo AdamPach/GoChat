@@ -17,7 +17,7 @@ func (s *Server) ManageRooms(reader *bufio.Reader) error {
 		name, err := reader.ReadString('\n')
 		Shared.LogError(&err)
 		name = Shared.RemoveSendingCharacters(name)
-		s.rooms[name] = CreateRoom(name)
+		s.Rooms[name] = CreateRoom(name)
 		return nil
 	} else if Shared.FormatCommand(command) == "delete" {
 		s.PrintAllRooms()
@@ -35,22 +35,22 @@ func (s *Server) ManageRooms(reader *bufio.Reader) error {
 
 func (s *Server) PrintAllRooms() {
 	fmt.Println("All rooms: ")
-	for r := range s.rooms {
+	for r := range s.Rooms {
 		fmt.Println(r)
 	}
 }
 
 func (s *Server) DeleteRoom(roomName string) error {
-	deletedRoom := s.rooms[roomName]
+	deletedRoom := s.Rooms[roomName]
 
 	if deletedRoom == nil {
 		return errors.New("You enter bad room name!")
 	}
 
 	for _, client := range deletedRoom.Clients {
-		client.room = nil
+		client.Room = nil
 	}
-	delete(s.rooms, deletedRoom.roomName)
+	delete(s.Rooms, deletedRoom.roomName)
 	deletedRoom = nil
 
 	return nil

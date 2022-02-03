@@ -9,17 +9,18 @@ import (
 )
 
 type Client struct {
-	name       string
-	room       *Room
-	connection net.Conn
+	Name       string
+	Room       *Room
+	Connection net.Conn
+	BaseServer *Server
 }
 
-func CreateIncomeClient(conn net.Conn) Client {
-	return Client{connection: conn}
+func CreateIncomeClient(conn net.Conn, ser *Server) Client {
+	return Client{Connection: conn, BaseServer: ser}
 }
 
 func (c *Client) HandleIncomingMessages(deadChannel chan net.Conn, server *Server) {
-	reader := bufio.NewReader(c.connection)
+	reader := bufio.NewReader(c.Connection)
 	for {
 		mesg, err := reader.ReadString('\n')
 		if err != nil {
@@ -32,60 +33,42 @@ func (c *Client) HandleIncomingMessages(deadChannel chan net.Conn, server *Serve
 		}
 	}
 
-	deadChannel <- c.connection
+	deadChannel <- c.Connection
 }
-
 func (c *Client) UseCommands(command string, server *Server) {
 	cmd := strings.Split(command, " ")
-	if Shared.RemoveSendingCharacters(cmd[0]) == "/rooms" {
-		roomsNames := make([]string, 0)
-		for rn := range server.rooms {
-			roomsNames = append(roomsNames, rn)
-		}
-		c.SendErrorMessage(fmt.Sprintf("Rooms: %s\n", strings.Join(roomsNames, ", ")))
+
+	SearchedCommand := SearcheCommand(server.ClientCommands, Shared.RemoveSendingCharacters(cmd[0]))
+
+	if SearchedCommand == nil {
+		c.SendErrorMessage("You enter command which don't exist!\n")
 		return
 	}
 
-	if len(cmd) < 2 {
-		c.SendErrorMessage("Please enter command with arguments\n")
+	err := SearchedCommand.ExecuteCommand(c, cmd[1:])
+	if err != nil {
+		c.SendErrorMessage(fmt.Sprintf("%s\n", err.Error()))
 		return
-	}
-
-	if cmd[0] == "/room" {
-		if c.name == "" {
-			c.SendErrorMessage("Firstly you must set nick with /nick command!\n")
-			return
-		}
-		res := server.AddClientToRoom(Shared.RemoveSendingCharacters(cmd[1]), c)
-		if !res {
-			c.SendErrorMessage("Please send existing room name\n")
-			return
-		}
-	} else if cmd[0] == "/nick" {
-		c.name = Shared.RemoveSendingCharacters(cmd[1])
-		return
-	} else {
-		c.SendMessage("This command don't exist!\n")
 	}
 }
 
 func (c *Client) SendErrorMessage(message string) {
-	_, err := c.connection.Write([]byte(message))
+	_, err := c.Connection.Write([]byte(message))
 	if err != nil {
 		return
 	}
 }
 
 func (c *Client) SendMessage(message string) {
-	if c.name == "" || c.room == nil {
+	if c.Name == "" || c.Room == nil {
 		c.SendErrorMessage("You haven't set Nickname or Room yet! Please set it\n")
 		return
 	}
-	message = fmt.Sprintf("%s : %s", c.name, message)
+	message = fmt.Sprintf("%s : %s", c.Name, message)
 
-	c.room.SendMessageToRoom(message, c)
+	c.Room.SendMessageToRoom(message, c)
 }
 
 func (c *Client) GetRoom() *Room {
-	return c.room
+	return c.Room
 }

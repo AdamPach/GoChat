@@ -12,7 +12,8 @@ import (
 
 type Server struct {
 	listener          net.Listener
-	rooms             map[string]*Room
+	Rooms             map[string]*Room
+	ClientCommands    []BaseCommand
 	running           bool
 	connections       map[net.Conn]*Client
 	incomeConnections chan net.Conn
@@ -25,7 +26,8 @@ func CreateServer(listener net.Listener) *Server {
 
 	return &Server{
 		listener:          listener,
-		rooms:             defRooms,
+		Rooms:             defRooms,
+		ClientCommands:    InitCommands(),
 		running:           true,
 		connections:       make(map[net.Conn]*Client),
 		incomeConnections: make(chan net.Conn),
@@ -51,7 +53,7 @@ func (s *Server) ManagedConnections() {
 		select {
 		case conn := <-s.incomeConnections:
 			{
-				newClient := CreateIncomeClient(conn)
+				newClient := CreateIncomeClient(conn, s)
 				s.connections[conn] = &newClient
 				go newClient.HandleIncomingMessages(s.deadConnections, s)
 			}
@@ -110,15 +112,15 @@ func (s *Server) DeleteDeadConnection(deadConn net.Conn) {
 }
 
 func (s *Server) AddClientToRoom(roomName string, client *Client) bool {
-	wantedRoom := s.rooms[roomName]
+	wantedRoom := s.Rooms[roomName]
 	if wantedRoom == nil {
 		return false
 	}
-	if client.room != nil {
-		client.room.RemoveClientFromRoom(client)
+	if client.Room != nil {
+		client.Room.RemoveClientFromRoom(client)
 	}
-	client.room = wantedRoom
-	wantedRoom.Clients[client.name] = client
+	client.Room = wantedRoom
+	wantedRoom.Clients[client.Name] = client
 
 	return true
 }

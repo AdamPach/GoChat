@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	"os"
 )
 
 func main() {
@@ -10,7 +11,7 @@ func main() {
 
 	if err != nil {
 		log.Fatal("You can't listen now!")
-		return
+		os.Exit(1)
 	}
 
 	defer listener.Close()

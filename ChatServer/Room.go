@@ -13,13 +13,13 @@ func CreateRoom(roomName string) *Room {
 }
 
 func (r *Room) DeleteClient(client *Client) {
-	delete(r.Clients, client.name)
+	delete(r.Clients, client.Name)
 }
 
 func (r *Room) SendMessageToRoom(message string, sender *Client) {
 	for _, client := range r.Clients {
 		if *client != *sender {
-			_, err := client.connection.Write([]byte(message))
+			_, err := client.Connection.Write([]byte(message))
 			if err != nil {
 				continue
 			}
@@ -28,5 +28,5 @@ func (r *Room) SendMessageToRoom(message string, sender *Client) {
 }
 
 func (r *Room) RemoveClientFromRoom(c *Client) {
-	delete(r.Clients, c.name)
+	delete(r.Clients, c.Name)
 }
