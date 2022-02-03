@@ -3,11 +3,11 @@ package Handlers
 import (
 	"GoChat/ChatServer/Funcs/Managers"
 	"GoChat/ChatServer/Funcs/Static"
-	"GoChat/ChatServer/Models"
+	"GoChat/ChatServer/Models/ServerModels"
 	"log"
 )
 
-func Listen(s *Models.Server) {
+func Listen(s *ServerModels.Server) {
 	for s.Running {
 		newConn, err := s.Listener.Accept()
 		if err != nil {
@@ -19,7 +19,7 @@ func Listen(s *Models.Server) {
 	}
 }
 
-func ManageConnections(s *Models.Server) {
+func ManageConnections(s *ServerModels.Server) {
 	for s.Running {
 		select {
 		case IncomeConn := <-s.IncomeConnections:

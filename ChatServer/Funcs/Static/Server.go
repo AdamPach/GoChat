@@ -1,19 +1,19 @@
 package Static
 
 import (
-	"GoChat/ChatServer/Models"
+	"GoChat/ChatServer/Funcs/ClientCommands"
 	"GoChat/ChatServer/Models/ServerModels"
 	"net"
 )
 
-func CreateServer(listener net.Listener) *Models.Server {
+func CreateServer(listener net.Listener) *ServerModels.Server {
 	defRooms := make(map[string]*ServerModels.Room)
 	defRooms["default"] = CreateRoom("default")
 
-	return &Models.Server{
-		Listener: listener,
-		Rooms:    defRooms,
-		//ClientCommands:    InitCommands(),
+	return &ServerModels.Server{
+		Listener:          listener,
+		Rooms:             defRooms,
+		ClientCommands:    ClientCommands.InitCommands(),
 		Running:           true,
 		Connections:       make(map[net.Conn]*ServerModels.ChatClient),
 		IncomeConnections: make(chan net.Conn),

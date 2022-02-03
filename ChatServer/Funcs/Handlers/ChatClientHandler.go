@@ -2,12 +2,11 @@ package Handlers
 
 import (
 	"GoChat/ChatServer/Funcs/Sender"
-	"GoChat/ChatServer/Models"
 	"GoChat/ChatServer/Models/ServerModels"
 	"bufio"
 )
 
-func HandleClientMessages(c *ServerModels.ChatClient, s *Models.Server) {
+func HandleClientMessages(c *ServerModels.ChatClient, s *ServerModels.Server) {
 	reader := bufio.NewReader(c.Connection)
 	for s.Running {
 		mesg, err := reader.ReadString('\n')

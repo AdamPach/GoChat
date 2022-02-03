@@ -1,7 +1,7 @@
 package Admin
 
 import (
-	"GoChat/ChatServer/Models"
+	"GoChat/ChatServer/Models/ServerModels"
 	"GoChat/Shared"
 	"bufio"
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func ManageRunningServer(s *Models.Server) {
+func ManageRunningServer(s *ServerModels.Server) {
 	input := bufio.NewReader(os.Stdin)
 
 	for s.Running {
@@ -34,7 +34,7 @@ func ManageRunningServer(s *Models.Server) {
 	}
 }
 
-func CloseAllConections(s *Models.Server) {
+func CloseAllConections(s *ServerModels.Server) {
 	for c := range s.Connections {
 		c.Close()
 	}

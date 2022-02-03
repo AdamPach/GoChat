@@ -2,14 +2,14 @@ package Admin
 
 import (
 	"GoChat/ChatServer/Funcs/Static"
-	"GoChat/ChatServer/Models"
+	"GoChat/ChatServer/Models/ServerModels"
 	"GoChat/Shared"
 	"bufio"
 	"errors"
 	"fmt"
 )
 
-func ManageRooms(s *Models.Server, reader *bufio.Reader) error {
+func ManageRooms(s *ServerModels.Server, reader *bufio.Reader) error {
 
 	fmt.Print("1 - Add Room\n2 - Delete Room\nChose operation: ")
 	command, err := reader.ReadString('\n')
@@ -35,14 +35,14 @@ func ManageRooms(s *Models.Server, reader *bufio.Reader) error {
 	return errors.New("You enter bad choice")
 }
 
-func PrintAllRooms(s *Models.Server) {
+func PrintAllRooms(s *ServerModels.Server) {
 	fmt.Println("All rooms: ")
 	for r := range s.Rooms {
 		fmt.Println(r)
 	}
 }
 
-func DeleteRoom(s *Models.Server, roomName string) error {
+func DeleteRoom(s *ServerModels.Server, roomName string) error {
 	deletedRoom := s.Rooms[roomName]
 
 	if deletedRoom == nil {

@@ -1,11 +1,11 @@
 package Managers
 
 import (
-	"GoChat/ChatServer/Models"
+	"GoChat/ChatServer/Models/ServerModels"
 	"net"
 )
 
-func DeleteDeadConnection(s *Models.Server, DeadConn net.Conn) {
+func DeleteDeadConnection(s *ServerModels.Server, DeadConn net.Conn) {
 	for item := range s.Connections {
 		if item == DeadConn {
 			deadClient := s.Connections[DeadConn]
