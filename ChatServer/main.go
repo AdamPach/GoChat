@@ -18,7 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	Listener, err := net.Listen("tcp", ":7000")
+	Listener, err := net.Listen("tcp", Config.GetPort(config))
 
 	if err != nil {
 		fmt.Println("You cant listen now!")

@@ -1,6 +1,8 @@
 package Admin
 
 import (
+	"GoChat/ChatServer/Config"
+	"GoChat/ChatServer/Config/ConfigModels"
 	"GoChat/ChatServer/Models/ServerModels"
 	"GoChat/Shared"
 	"bufio"
@@ -31,6 +33,19 @@ func ManageRunningServer(s *ServerModels.Server) {
 				fmt.Println(err)
 			}
 		}
+	}
+}
+
+func SaveConfig(s *ServerModels.Server) {
+	NewRooms := make([]ConfigModels.Room, 0)
+	for rName := range s.Rooms {
+		NewRooms = append(NewRooms, ConfigModels.Room{Name: rName})
+	}
+	s.ServerConfig.Configuration.Rooms = NewRooms
+	err := Config.WriteConfig(s.ServerConfig)
+
+	if err != nil {
+		fmt.Println("[ERROR]: Cant save config!")
 	}
 }
 

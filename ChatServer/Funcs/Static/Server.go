@@ -8,13 +8,11 @@ import (
 )
 
 func CreateServer(listener net.Listener, config *ConfigModels.RunningConfig) *ServerModels.Server {
-	defRooms := make(map[string]*ServerModels.Room)
-	defRooms["default"] = CreateRoom("default")
 
 	return &ServerModels.Server{
 		Listener:          listener,
 		ServerConfig:      config,
-		Rooms:             defRooms,
+		Rooms:             ReadRoomsFromConfig(config),
 		ClientCommands:    ClientCommands.InitCommands(),
 		Running:           true,
 		Connections:       make(map[net.Conn]*ServerModels.ChatClient),

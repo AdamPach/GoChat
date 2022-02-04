@@ -21,6 +21,7 @@ func ManageRooms(s *ServerModels.Server, reader *bufio.Reader) error {
 		Shared.LogError(&err)
 		name = Shared.RemoveSendingCharacters(name)
 		s.Rooms[name] = Static.CreateRoom(name)
+		SaveConfig(s)
 		return nil
 	} else if Shared.FormatCommand(command) == "delete" {
 		PrintAllRooms(s)
@@ -56,6 +57,8 @@ func DeleteRoom(s *ServerModels.Server, roomName string) error {
 	}
 	delete(s.Rooms, deletedRoom.RoomName)
 	deletedRoom = nil
+
+	SaveConfig(s)
 
 	return nil
 }

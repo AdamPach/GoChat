@@ -59,7 +59,7 @@ func CreateConfigFile(configPath string) (*ConfigModels.RunningConfig, error) {
 	config := ConfigModels.RunningConfig{
 		ConfigFilePath: configPath,
 		Configuration: &ConfigModels.Config{
-			Port: Shared.RemoveSendingCharacters(port),
+			Port: fmt.Sprintf(":%s", Shared.RemoveSendingCharacters(port)),
 			Rooms: []ConfigModels.Room{
 				{Name: "default"},
 			},
@@ -92,4 +92,34 @@ func CreateConfigFile(configPath string) (*ConfigModels.RunningConfig, error) {
 	}
 
 	return &config, nil
+}
+
+func WriteConfig(r *ConfigModels.RunningConfig) error {
+	f, err := os.OpenFile(r.ConfigFilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	data, err := json.Marshal(r.Configuration)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = f.WriteString(string(data))
+
+	if err != nil {
+		return err
+	}
+
+	err = f.Sync()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
