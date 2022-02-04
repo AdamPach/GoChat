@@ -1,11 +1,13 @@
 package ServerModels
 
 import (
+	"GoChat/ChatServer/Config/ConfigModels"
 	"net"
 )
 
 type Server struct {
 	Listener          net.Listener
+	ServerConfig      *ConfigModels.RunningConfig
 	IncomeConnections chan net.Conn
 	DeadConnections   chan net.Conn
 	Running           bool
