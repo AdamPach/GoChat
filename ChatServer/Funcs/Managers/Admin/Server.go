@@ -69,5 +69,8 @@ func InitServerCommands() map[string]*ServerModels.ServerCommand {
 	NewCmd = CreateAdminRoomsCommand()
 	AdminCommands[NewCmd.Name] = NewCmd
 
+	NewCmd = CreateKickClientCommand()
+	AdminCommands[NewCmd.Name] = NewCmd
+
 	return AdminCommands
 }

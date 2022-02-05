@@ -12,23 +12,27 @@ import (
 
 func ManageRooms(s *ServerModels.Server, reader *bufio.Reader) error {
 
-	fmt.Print("1 - Add Room\n2 - Delete Room\n3 - Show All Rooms\nChose operation: ")
-	command, err := reader.ReadString('\n')
-	Shared.LogError(&err)
+	fmt.Print("1 - Add Room\n2 - Delete Room\n3 - Show All Rooms\n")
+	command, err := Shared.EnterCommand(*reader, "Chose operation: ")
+	if err != nil {
+		return err
+	}
 
 	if Shared.FormatCommand(command) == "add" {
-		fmt.Print("Enter new room name: ")
-		name, err := reader.ReadString('\n')
-		Shared.LogError(&err)
-		name = Shared.RemoveSendingCharacters(name)
+		name, err := Shared.EnterCommand(*reader, "Enter name of new room: ")
+		if err != nil {
+			return err
+		}
 		s.Rooms[name] = Static.CreateRoom(name)
 		SaveConfig(s)
 		return nil
 	} else if Shared.FormatCommand(command) == "delete" {
 		PrintAllRooms(s)
-		rn, err := reader.ReadString('\n')
-		Shared.LogError(&err)
-		err = DeleteRoom(s, Shared.RemoveSendingCharacters(rn))
+		rn, err := Shared.EnterCommand(*reader, "Enter room name: ")
+		if err != nil {
+			return err
+		}
+		err = DeleteRoom(s, rn)
 		if err != nil {
 			return err
 		}
