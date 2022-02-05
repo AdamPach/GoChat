@@ -8,11 +8,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 func ManageRunningServer(s *ServerModels.Server) {
 	input := bufio.NewReader(os.Stdin)
+
+	AdminCommadns := InitServerCommands()
 
 	for s.Running {
 		fmt.Print("> ")
@@ -23,16 +24,20 @@ func ManageRunningServer(s *ServerModels.Server) {
 			os.Exit(1)
 		}
 
-		if strings.ToLower(Shared.RemoveSendingCharacters(command)) == "exit" {
-			s.Running = false
-			CloseAllConections(s)
-			os.Exit(0)
-		} else if strings.ToLower(Shared.RemoveSendingCharacters(command)) == "rooms" {
-			err = ManageRooms(s, input)
-			if err != nil {
-				fmt.Println(err)
-			}
+		AdminCommand := AdminCommadns[Shared.FormatCommand(command)]
+
+		if AdminCommand == nil {
+			fmt.Println("Bad command name")
+			continue
 		}
+
+		err = AdminCommand.ExecCommand(s, input)
+
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+
 	}
 }
 
@@ -53,4 +58,16 @@ func CloseAllConections(s *ServerModels.Server) {
 	for c := range s.Connections {
 		c.Close()
 	}
+}
+
+func InitServerCommands() map[string]*ServerModels.ServerCommand {
+	AdminCommands := make(map[string]*ServerModels.ServerCommand)
+
+	NewCmd := CreateExitCommand()
+	AdminCommands[NewCmd.Name] = NewCmd
+
+	NewCmd = CreateAdminRoomsCommand()
+	AdminCommands[NewCmd.Name] = NewCmd
+
+	return AdminCommands
 }
