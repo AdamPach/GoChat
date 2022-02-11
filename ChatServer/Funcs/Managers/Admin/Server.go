@@ -43,6 +43,7 @@ func ManageRunningServer(s *ServerModels.Server) {
 
 func SaveConfig(s *ServerModels.Server) {
 	NewRooms := make([]ConfigModels.Room, 0)
+	s.RoomLocker.RLock()
 	for rName := range s.Rooms {
 		NewRooms = append(NewRooms, ConfigModels.Room{Name: rName})
 	}
@@ -52,6 +53,7 @@ func SaveConfig(s *ServerModels.Server) {
 	if err != nil {
 		fmt.Println("[ERROR]: Cant save config!")
 	}
+	s.RoomLocker.RUnlock()
 }
 
 func CloseAllConections(s *ServerModels.Server) {

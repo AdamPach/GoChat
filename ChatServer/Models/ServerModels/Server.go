@@ -3,6 +3,7 @@ package ServerModels
 import (
 	"GoChat/ChatServer/Config/ConfigModels"
 	"net"
+	"sync"
 )
 
 type Server struct {
@@ -14,4 +15,5 @@ type Server struct {
 	Connections       map[net.Conn]*ChatClient
 	Rooms             map[string]*Room
 	ClientCommands    map[string]*ClientCommand
+	RoomLocker        sync.RWMutex
 }

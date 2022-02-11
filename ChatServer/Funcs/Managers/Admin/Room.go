@@ -23,7 +23,9 @@ func ManageRooms(s *ServerModels.Server, reader *bufio.Reader) error {
 		if err != nil {
 			return err
 		}
+		s.RoomLocker.Lock()
 		s.Rooms[name] = Static.CreateRoom(name)
+		s.RoomLocker.Unlock()
 		SaveConfig(s)
 		return nil
 	} else if Shared.FormatCommand(command) == "delete" {
@@ -47,12 +49,15 @@ func ManageRooms(s *ServerModels.Server, reader *bufio.Reader) error {
 
 func PrintAllRooms(s *ServerModels.Server) {
 	fmt.Println("All rooms: ")
+	s.RoomLocker.RLock()
 	for r := range s.Rooms {
 		fmt.Println(r)
 	}
+	s.RoomLocker.RUnlock()
 }
 
 func DeleteRoom(s *ServerModels.Server, roomName string) error {
+	s.RoomLocker.Lock()
 	deletedRoom := s.Rooms[roomName]
 
 	if deletedRoom == nil {
@@ -66,6 +71,7 @@ func DeleteRoom(s *ServerModels.Server, roomName string) error {
 	delete(s.Rooms, deletedRoom.RoomName)
 	deletedRoom = nil
 
+	s.RoomLocker.Unlock()
 	SaveConfig(s)
 
 	return nil

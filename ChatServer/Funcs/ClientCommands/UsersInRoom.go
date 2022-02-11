@@ -21,7 +21,7 @@ func ExecuteUserInRoom(client *ServerModels.ChatClient, server *ServerModels.Ser
 	}
 
 	names := make([]string, 0)
-
+	server.RoomLocker.RLock()
 	for _, user := range client.Room.Clients {
 		if user == client {
 			names = append(names, "You")
@@ -29,7 +29,7 @@ func ExecuteUserInRoom(client *ServerModels.ChatClient, server *ServerModels.Ser
 		}
 		names = append(names, user.Name)
 	}
-
+	server.RoomLocker.RUnlock()
 	client.Connection.Write([]byte(fmt.Sprintf("Users: %s\n", strings.Join(names, ", "))))
 
 	return nil

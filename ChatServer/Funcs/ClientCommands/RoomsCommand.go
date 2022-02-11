@@ -17,11 +17,11 @@ func CreateRoomsCommand() *ServerModels.ClientCommand {
 
 func ExecruteRoomsCommand(client *ServerModels.ChatClient, server *ServerModels.Server, args []string) error {
 	roomsName := make([]string, 0)
-
+	server.RoomLocker.RLock()
 	for rn := range server.Rooms {
 		roomsName = append(roomsName, rn)
 	}
-
+	server.RoomLocker.RUnlock()
 	Sender.SendInfo(client, fmt.Sprintf("Rooms: %s", strings.Join(roomsName, ", ")))
 
 	return nil

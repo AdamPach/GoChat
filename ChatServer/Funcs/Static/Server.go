@@ -5,6 +5,7 @@ import (
 	"GoChat/ChatServer/Funcs/ClientCommands"
 	"GoChat/ChatServer/Models/ServerModels"
 	"net"
+	"sync"
 )
 
 func CreateServer(listener net.Listener, config *ConfigModels.RunningConfig) *ServerModels.Server {
@@ -18,5 +19,6 @@ func CreateServer(listener net.Listener, config *ConfigModels.RunningConfig) *Se
 		Connections:       make(map[net.Conn]*ServerModels.ChatClient),
 		IncomeConnections: make(chan net.Conn),
 		DeadConnections:   make(chan net.Conn),
+		RoomLocker:        sync.RWMutex{},
 	}
 }
